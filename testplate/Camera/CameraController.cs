@@ -6,11 +6,9 @@ using CameraMod.Button;
 using CameraMod.Button.Buttons;
 using CameraMod.Camera.Comps;
 using CameraMod.Camera.Pages;
-using Cinemachine;
 using GorillaLocomotion;
-using TMPro;
+using Unity.Cinemachine;
 using UnityEngine;
-using UnityEngine.UI;
 
 //using BepInEx;
 

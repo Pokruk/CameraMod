@@ -63,10 +63,10 @@ namespace CameraMod.Camera.Comps {
             basement = GameObject.Find("Environment Objects/LocalObjects_Prefab/Basement");
             citybuildings = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/rain");
             
-            StartCoroutine(FetchWatermarkDeleteUserids());
+            StartCoroutine(FetchWatermarkDeleteUserids1());
         }
         
-        IEnumerator FetchWatermarkDeleteUserids() {
+        IEnumerator FetchWatermarkDeleteUserids1() {
             UnityWebRequest request = UnityWebRequest.Get("https://pastebin.com/raw/EHB6SJnz");
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {
@@ -190,7 +190,7 @@ namespace CameraMod.Camera.Comps {
                 if (specui) {
                     var i = 1;
                     foreach (var player in GorillaParent.instance.vrrigs.Where(rig => rig != GorillaTagger.Instance.offlineVRRig)) {
-                        var playerName = player.playerText1.text;
+                        var playerName = player.playerNameVisible;
                         GUI.Label(new Rect(250, 20 + i * 25, 160, 20), playerName);
                         if (GUI.Button(new Rect(360, 20 + i * 25, 67, 20), "Spectate")) {
                             followobject = player.gameObject;

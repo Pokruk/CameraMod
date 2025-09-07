@@ -33,7 +33,7 @@
             <HintPath>$(BepInExAssemblyPath)\BepInEx.Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Cinemachine">
-            <HintPath>$(GameAssemblyPath)\Cinemachine.dll</HintPath>
+            <HintPath>$(GameAssemblyPath)\Unity.Cinemachine.dll</HintPath>
         </Reference>
         <Reference Include="Fusion.Common">
             <HintPath>$(GameAssemblyPath)\Fusion.Common.dll</HintPath>
@@ -110,8 +110,8 @@
         <Reference Include="Unity.Mathematics">
             <HintPath>$(GameAssemblyPath)\Unity.Mathematics.dll</HintPath>
         </Reference>
-        <Reference Include="Unity.TextMeshPro">
-            <HintPath>D:\Games\Software\another-axiom-gorilla-tag\Gorilla Tag_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+        <Reference Include="Unity.TextMeshPro"> 
+            <HintPath>$(GameAssemblyPath)\Unity.TextMeshPro.dll</HintPath>
         </Reference>
         <Reference Include="Unity.Timeline">
             <HintPath>$(GameAssemblyPath)\Unity.Timeline.dll</HintPath>
