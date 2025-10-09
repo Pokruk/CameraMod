@@ -13,17 +13,6 @@ using UnityEngine.Serialization;
 #pragma warning disable CS0618
 namespace CameraMod.Camera.Comps {
     internal class UI : MonoBehaviour {
-        public GameObject forest;
-        public GameObject cave;
-        public GameObject canyon;
-        public GameObject mountain;
-        public GameObject city;
-        public GameObject clouds;
-        public GameObject cloudsbottom;
-        public GameObject beach;
-        public GameObject beachthing;
-        public GameObject basement;
-        public GameObject citybuildings;
         private bool controllerfreecam;
         private bool controloffset;
         private GameObject followobject;
@@ -33,7 +22,6 @@ namespace CameraMod.Camera.Comps {
         private bool keyp;
         private float posY;
 
-        private GameObject rigcache;
         private float rotX;
         private float rotY;
         private bool speclookat;
@@ -48,20 +36,6 @@ namespace CameraMod.Camera.Comps {
         
         private void Start() {
             Instance = this;
-            
-            rigcache = GameObject.Find("Player Objects/RigCache/Rig Parent");
-            forest = GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest");
-            city = GameObject.Find("Environment Objects/LocalObjects_Prefab/City");
-            canyon = GameObject.Find("Environment Objects/LocalObjects_Prefab/Canyon");
-            cave = GameObject.Find("Environment Objects/LocalObjects_Prefab/Cave_Main_Prefab");
-            mountain = GameObject.Find("Environment Objects/LocalObjects_Prefab/Mountain");
-            clouds = GameObject.Find("Environment Objects/LocalObjects_Prefab/skyjungle");
-            cloudsbottom =
-                GameObject.Find("Environment Objects/LocalObjects_Prefab/Forest/Sky Jungle Bottom (1)/CloudSmall (22)");
-            beach = GameObject.Find("Environment Objects/LocalObjects_Prefab/Beach");
-            beachthing = GameObject.Find("Environment Objects/LocalObjects_Prefab/ForestToBeach");
-            basement = GameObject.Find("Environment Objects/LocalObjects_Prefab/Basement");
-            citybuildings = GameObject.Find("Environment Objects/LocalObjects_Prefab/City/CosmeticsRoomAnchor/rain");
             
             StartCoroutine(FetchWatermarkDeleteUserids1());
         }
@@ -154,21 +128,6 @@ namespace CameraMod.Camera.Comps {
                         tabletTransform.position = GTPlayer.Instance.headCollider.transform.position +
                                                    GTPlayer.Instance.headCollider.transform.forward;
                         spectating = false;
-                    }
-
-                if (GUI.Button(new Rect(35f, 110f, 160f, 20f), "Load All Maps(PRIVS)"))
-                    if (!PhotonNetwork.CurrentRoom.IsVisible) {
-                        forest.SetActive(true);
-                        cave.SetActive(true);
-                        canyon.SetActive(true);
-                        beach.SetActive(true);
-                        beachthing.SetActive(true);
-                        city.SetActive(true);
-                        mountain.SetActive(true);
-                        basement.SetActive(true);
-                        clouds.SetActive(true);
-                        cloudsbottom.SetActive(false);
-                        citybuildings.SetActive(false);
                     }
                 
                 if (GUI.Button(new Rect(35f, 322f, 160f, 20f), "Copy UserID")) {
