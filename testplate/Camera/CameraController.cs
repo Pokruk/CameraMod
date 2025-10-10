@@ -215,6 +215,9 @@ namespace CameraMod.Camera {
             var nearClipping = PlayerPrefs.GetFloat("CameraNearClip", 0.01f);
             SetNearClip(nearClipping);
             
+            angleClamping = PlayerPrefs.GetInt("AngleClamping", 1) == 1;
+            maxAngle = PlayerPrefs.GetFloat("AngleClampingValue", 30);
+            
             Binds.Init();
         }
         
@@ -376,16 +379,25 @@ namespace CameraMod.Camera {
             tabletCamera.enabled = visible;
         }
 
-        public string maxAngleInput = "30";
-        public float maxAngle = 30;
-        public void OnGUI() {
-            // maxAngleInput = GUI.TextField(new Rect(400, 400, 60, 30), maxAngleInput);
-            // if (GUI.Button(new Rect(400, 430, 60, 30), "Set Max Angle")) {
-            //     maxAngle = float.Parse(maxAngleInput);
-            // }
+        public static float maxAngle = 30;
+        public static float MaxAngle {
+            get => maxAngle;
+            set {
+                maxAngle = value;
+                PlayerPrefs.SetFloat("AngleClampingValue", maxAngle);
+                UI.clampAngleString = value.ToString();
+            }
         }
-
-        public static bool AngleClamping = true;
+        
+        private static bool angleClamping = true;
+        public static bool AngleClamping {
+            get => angleClamping;
+            set {
+                angleClamping = value;
+                PlayerPrefs.SetInt("AngleClamping", value ? 1 : 0);
+            }
+        }
+        
         public static bool RollLock = true;
         public void AnUpdate() {
             if (!init) return;

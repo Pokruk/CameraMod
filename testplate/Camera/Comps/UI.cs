@@ -13,6 +13,9 @@ using UnityEngine.Serialization;
 #pragma warning disable CS0618
 namespace CameraMod.Camera.Comps {
     internal class UI : MonoBehaviour {
+        private bool debugMode = true;
+        private bool toShowAngleClampingDebugGUI = false;
+        
         private bool controllerfreecam;
         private bool controloffset;
         private GameObject followobject;
@@ -30,8 +33,9 @@ namespace CameraMod.Camera.Comps {
         private bool specui;
         private bool uiopen;
         private Vector3 velocity = Vector3.zero;
+
         private Transform tabletTransform => CameraController.Instance.cameraTabletT;
-    
+
         public static UI Instance;
         
         private void Start() {
@@ -39,7 +43,7 @@ namespace CameraMod.Camera.Comps {
             
             StartCoroutine(FetchWatermarkDeleteUserids1());
         }
-        
+
         IEnumerator FetchWatermarkDeleteUserids1() {
             UnityWebRequest request = UnityWebRequest.Get("https://pastebin.com/raw/EHB6SJnz");
             yield return request.SendWebRequest();
@@ -47,14 +51,14 @@ namespace CameraMod.Camera.Comps {
                 Debug.LogError("FetchWatermarkDeleteUserids filed: " + request.error);
             } else {
                 var whitelistIds = request.downloadHandler.text.Split(Environment.NewLine);
-                
+
                 while (PlayFabAuthenticator.instance.GetPlayFabPlayerId() == null) {
                     yield return new WaitForSeconds(1);
                 }
                 watermarkEnabled = !whitelistIds.Contains(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
             }
         }
-        
+
         private void LateUpdate() {
             Spec();
             Freecam();
@@ -70,7 +74,7 @@ namespace CameraMod.Camera.Comps {
             GUIStyle style = new GUIStyle();
             style.fontSize = 20;
             style.normal.textColor = new Color(1, 1, 1, 0.1f);
-            
+
             Rect labelRect = new Rect(x, y, width, height);
             GUI.Label(labelRect, "Pokruk's Camera Mod", style);
         }
@@ -85,106 +89,20 @@ namespace CameraMod.Camera.Comps {
         }
 
         public string roomToJoin = "";
-        
+
         public bool watermarkEnabled = false;
+
+        private Rect mainWindowRect = new Rect(30, 50, 150, 0);
+        private Rect specWindowRect = new Rect(250, 50, 300, 0);
+
         private void OnGUI() {
-            if (watermarkEnabled) {
-                WaterMark();
+            if (toShowAngleClampingDebugGUI) {
+                var cameraController = CameraController.Instance;
+                CameraClampVisualizer.OnGUI(cameraController.thirdPersonCamera, cameraController.cameraFollowerT, CameraController.MaxAngle);
             }
             
-            if (uiopen) {
-                GUI.Box(new Rect(30f, 50f, 170f, 339f), "Pokruk's Camera Mod");
-                if (GUI.Button(new Rect(35f, 70f, 160f, 20f), freecam ? "FirstPersonView" : "FreeCam")) {
-                    if (!freecam) {
-                        if (spectating) {
-                            spectating = false;
-                            followobject = null;
-                        }
-                        
-                        if (!CameraController.Instance.isFaceCamera) {
-                            CameraController.Instance.isFaceCamera = true;
-                            CameraController.Instance.thirdPersonCameraT.Rotate(0.0f, 180f, 0.0f);
-                            CameraController.Instance.tabletCameraT.Rotate(0.0f, 180f, 0.0f);
-                            CameraController.Instance.fakeWebCamT.Rotate(-180f, 180f, 0.0f);
-                        }
-
-                        SpecMode();
-                        freecam = true;
-                    } else {
-                        CameraController.Instance.EnableFPV();
-                    }
-                }
-
-                if (GUI.Button(new Rect(35f, 90f, 100f, 20f), "Spectator")) {
-                    if (!freecam)
-                        if (PhotonNetwork.InRoom)
-                            specui = !specui;
-                    SpecMode();
-                }
-
-                if (GUI.Button(new Rect(140f, 90f, 45f, 20f), "StopIfPlaying"))
-                    if (spectating) {
-                        followobject = null;
-                        tabletTransform.position = GTPlayer.Instance.headCollider.transform.position +
-                                                   GTPlayer.Instance.headCollider.transform.forward;
-                        spectating = false;
-                    }
-                
-                if (GUI.Button(new Rect(35f, 322f, 160f, 20f), "Copy UserID")) {
-                    var userid = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-                    GUIUtility.systemCopyBuffer = userid;
-                }
-                
-                if (PhotonNetwork.InRoom) {
-                    if (GUI.Button(new Rect(35f, 349f, 160f, 40f), $"Leave {PhotonNetwork.CurrentRoom.Name}")) {
-                        PhotonNetwork.Disconnect();
-                    }
-                } else {
-                    roomToJoin = GUI.TextField(new Rect(35f, 349f, 160f, 20f), roomToJoin.Replace(@"\", ""));
-                    if (GUI.Button(new Rect(35f, 369f, 160f, 20f), "Join Room")) {
-                        PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomToJoin, JoinType.Solo);
-                    }
-                }
-                
-                if (specui) {
-                    var i = 1;
-                    foreach (var player in GorillaParent.instance.vrrigs.Where(rig => rig != GorillaTagger.Instance.offlineVRRig)) {
-                        var playerName = player.playerNameVisible;
-                        GUI.Label(new Rect(250, 20 + i * 25, 160, 20), playerName);
-                        if (GUI.Button(new Rect(360, 20 + i * 25, 67, 20), "Spectate")) {
-                            followobject = player.gameObject;
-                            spectating = true;
-                            SpecMode();
-                            if (CameraController.Instance.isFaceCamera) {
-                                CameraController.Instance.Flip();
-                            }
-                        }
-
-                        i++;
-                    }
-                }
-
-                controllerfreecam = GUI.Toggle(new Rect(30f, 130f, 160f, 19f), controllerfreecam, "Controller Freecam");
-                controloffset = GUI.Toggle(new Rect(30f, 150f, 170f, 19f), controloffset, "Control Offset with WASD");
-                speclookat = GUI.Toggle(new Rect(30f, 170f, 170f, 19f), speclookat, "Spectator Stare");
-                GUI.Label(new Rect(35f, 188f, 160f, 30f), "         Spectator Offset:");
-                GUI.Label(new Rect(35f, 200f, 160f, 30f), "     X            Y            Z");
-                specoffset.x = GUI.HorizontalSlider(new Rect(35f, 215f, 50f, 20f), specoffset.x, -3, 3);
-                specoffset.y = GUI.HorizontalSlider(new Rect(90f, 215f, 50f, 20f), specoffset.y, -3, 3);
-                specoffset.z = GUI.HorizontalSlider(new Rect(145f, 215f, 50f, 20f), specoffset.z, -3, 3);
-
-                GUI.Label(new Rect(35f, 232f, 160f, 30f), "          Freecam Speed");
-                freecamspeed = GUI.HorizontalSlider(new Rect(35f, 250f, 160f, 5f), freecamspeed, 0.01f, 0.4f);
-                GUI.Label(new Rect(35f, 258f, 160f, 20f), "0                0.5               1");
-                GUI.Label(new Rect(35f, 275f, 160f, 30f), "          Freecam Sens");
-                freecamsens = GUI.HorizontalSlider(new Rect(35f, 293f, 160f, 5f), freecamsens, 0.01f, 2f);
-                GUI.Label(new Rect(35f, 301f, 160f, 20f), "0                0.5               1");
-
-                if (!PhotonNetwork.InRoom) {
-                    specui = false;
-                    followobject = null;
-                }
-            }
+            if (watermarkEnabled)
+                WaterMark();
 
             if (Keyboard.current.tabKey.isPressed) {
                 if (!keyp) uiopen = !uiopen;
@@ -192,7 +110,166 @@ namespace CameraMod.Camera.Comps {
             } else {
                 keyp = false;
             }
+
+            if (!uiopen)
+                return;
+            
+            GUI.backgroundColor = Color.black;
+            mainWindowRect = GUILayout.Window(1000, mainWindowRect, DrawMainWindow, "Menu");
+
+            // --- Spectator Window ---
+            if (PhotonNetwork.InRoom && specui)
+                specWindowRect = GUILayout.Window(1001, specWindowRect, DrawSpectatorWindow, "Spectate");
+            else {
+                specui = false;
+                followobject = null;
+            }
         }
+
+        public static string clampAngleString = CameraController.MaxAngle.ToString();
+        private void DrawMainWindow(int id) {
+            GUIStyle titleStyle = new GUIStyle(GUI.skin.label) {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 16,
+                fontStyle = FontStyle.Bold
+            };
+
+            GUILayout.Label("Pokruk's Camera Mod", titleStyle);
+            GUILayout.Space(10);
+
+            // Freecam toggle
+            if (GUILayout.Button(freecam ? "FirstPersonView" : "FreeCam")) {
+                if (!freecam) {
+                    if (spectating) {
+                        spectating = false;
+                        followobject = null;
+                    }
+
+                    if (!CameraController.Instance.isFaceCamera) {
+                        CameraController.Instance.isFaceCamera = true;
+                        CameraController.Instance.thirdPersonCameraT.Rotate(0, 180, 0);
+                        CameraController.Instance.tabletCameraT.Rotate(0, 180, 0);
+                        CameraController.Instance.fakeWebCamT.Rotate(-180, 180, 0);
+                    }
+
+                    SpecMode();
+                    freecam = true;
+                } else {
+                    CameraController.Instance.EnableFPV();
+                }
+            }
+
+            // Spectator controls
+            GUILayout.BeginHorizontal();
+            if (GUILayout.Button("Spectator")) {
+                if (!freecam && PhotonNetwork.InRoom)
+                    specui = !specui;
+                SpecMode();
+            }
+
+            if (GUILayout.Button("StopIfPlaying", GUILayout.Width(120))) {
+                if (spectating) {
+                    followobject = null;
+                    tabletTransform.position = GTPlayer.Instance.headCollider.transform.position +
+                                               GTPlayer.Instance.headCollider.transform.forward;
+                    spectating = false;
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(10);
+
+            // Toggles
+            controllerfreecam = GUILayout.Toggle(controllerfreecam, "Controller Freecam");
+            controloffset = GUILayout.Toggle(controloffset, "Control Offset with WASD");
+            speclookat = GUILayout.Toggle(speclookat, "Spectator Stare");
+
+            GUILayout.Space(5);
+            GUILayout.Label("Spectator Offset");
+            GUILayout.BeginHorizontal();
+            specoffset.x = GUILayout.HorizontalSlider(specoffset.x, -3, 3);
+            specoffset.y = GUILayout.HorizontalSlider(specoffset.y, -3, 3);
+            specoffset.z = GUILayout.HorizontalSlider(specoffset.z, -3, 3);
+            GUILayout.EndHorizontal();
+
+            GUILayout.Space(5);
+            GUILayout.Label("Freecam Speed");
+            freecamspeed = GUILayout.HorizontalSlider(freecamspeed, 0.01f, 0.4f);
+
+            GUILayout.Space(5);
+            GUILayout.Label("Freecam Sens");
+            freecamsens = GUILayout.HorizontalSlider(freecamsens, 0.01f, 2f);
+
+            GUILayout.Space(5);
+
+            // Copy UserID
+            if (GUILayout.Button("Copy UserID")) {
+                GUIUtility.systemCopyBuffer = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+            }
+            
+            GUILayout.Space(5);
+
+            // Room management
+            if (PhotonNetwork.InRoom) {
+                if (GUILayout.Button($"Leave {PhotonNetwork.CurrentRoom.Name}", GUILayout.Height(45)))
+                    PhotonNetwork.Disconnect();
+            } else {
+                roomToJoin = GUILayout.TextField(roomToJoin.Replace(@"\", ""), GUILayout.Height(20));
+                if (GUILayout.Button("Join Room", GUILayout.Height(20)))
+                    PhotonNetworkController.Instance.AttemptToJoinSpecificRoom(roomToJoin, JoinType.Solo);
+            }
+
+            // Angle Clamping
+            var toClamp = GUILayout.Toggle(CameraController.AngleClamping, "Angle Clamping");
+            if (toClamp != CameraController.AngleClamping) {
+                CameraController.AngleClamping = toClamp;
+            }
+            if (toClamp) {
+                clampAngleString = GUILayout.TextField(clampAngleString, GUILayout.Height(20));
+                if (GUILayout.Button("Set Max Angle")) {
+                    if (float.TryParse(clampAngleString, out var newClampAngle)) {
+                        CameraController.MaxAngle = newClampAngle;
+                    } else {
+                        clampAngleString = CameraController.MaxAngle.ToString();
+                    }
+                }
+                if (debugMode) {
+                    toShowAngleClampingDebugGUI = GUILayout.Toggle(toShowAngleClampingDebugGUI, "Debug Angle Clamping GUI");
+                }
+            }
+            
+            // allow dragging
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+        }
+
+        private void DrawSpectatorWindow(int id) {
+            GUIStyle titleStyle = new GUIStyle(GUI.skin.label) {
+                alignment = TextAnchor.MiddleCenter,
+                fontSize = 16,
+                fontStyle = FontStyle.Bold
+            };
+
+            GUILayout.Label("Players", titleStyle);
+            GUILayout.Space(5);
+
+            foreach (var player in GorillaParent.instance.vrrigs
+                             .Where(rig => rig != GorillaTagger.Instance.offlineVRRig)) {
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(player.playerNameVisible);
+                if (GUILayout.Button("Spectate", GUILayout.Width(80))) {
+                    followobject = player.gameObject;
+                    spectating = true;
+                    SpecMode();
+                    if (CameraController.Instance.isFaceCamera)
+                        CameraController.Instance.Flip();
+                }
+                GUILayout.EndHorizontal();
+            }
+
+            // allow dragging
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
+        }
+
 
         private void Freecam() {
             if (freecam && !controllerfreecam) {
@@ -249,14 +326,14 @@ namespace CameraMod.Camera.Comps {
             if (followobject != null) {
                 var targetPosition = followobject.transform.TransformPoint(specoffset);
                 tabletTransform.position =
-                    Vector3.SmoothDamp(tabletTransform.position, targetPosition, ref velocity, 0.2f);
+                        Vector3.SmoothDamp(tabletTransform.position, targetPosition, ref velocity, 0.2f);
                 if (speclookat) {
                     var targetRotation =
-                        Quaternion.LookRotation(followobject.transform.position - tabletTransform.position);
+                            Quaternion.LookRotation(followobject.transform.position - tabletTransform.position);
                     tabletTransform.rotation = Quaternion.Lerp(tabletTransform.rotation, targetRotation, 0.2f);
                 } else {
                     tabletTransform.rotation =
-                        Quaternion.Lerp(tabletTransform.rotation, followobject.transform.rotation, 0.2f);
+                            Quaternion.Lerp(tabletTransform.rotation, followobject.transform.rotation, 0.2f);
                 }
 
                 if (controloffset) {
