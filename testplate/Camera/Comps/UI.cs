@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -9,6 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Networking;
 using UnityEngine.Serialization;
+using Debug = UnityEngine.Debug;
 
 #pragma warning disable CS0618
 namespace CameraMod.Camera.Comps {
@@ -237,6 +239,10 @@ namespace CameraMod.Camera.Comps {
                     toShowAngleClampingDebugGUI = GUILayout.Toggle(toShowAngleClampingDebugGUI, "Debug Angle Clamping GUI");
                 }
             }
+
+            GUILayout.Space(10);
+            
+            if (GUILayout.Button("Join Discord")) Process.Start("https://discord.gg/8qaPhVjpsG");
             
             // allow dragging
             GUI.DragWindow(new Rect(0, 0, 10000, 20));
