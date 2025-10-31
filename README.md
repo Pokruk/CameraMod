@@ -2,7 +2,7 @@
 
 ## Check out [the mod showcase on TikTok](https://www.tiktok.com/@pokrukgt/video/7427872588166073608) <br />
 ![Download (4)_5](https://github.com/user-attachments/assets/6e87dc89-a3bf-49af-80f7-8a9e3655374f)
-
+![](https://private-user-images.githubusercontent.com/46229617/508195014-0af0fd28-0ab5-47e1-89c3-82c347f0daa8.gif?jwt=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3NjE5MTMyNjYsIm5iZiI6MTc2MTkxMjk2NiwicGF0aCI6Ii80NjIyOTYxNy81MDgxOTUwMTQtMGFmMGZkMjgtMGFiNS00N2UxLTg5YzMtODJjMzQ3ZjBkYWE4LmdpZj9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTEwMzElMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUxMDMxVDEyMTYwNlomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPWIxODA3YWY3M2E3MjUwMjZjNmQzY2U0ODE1MmFhMGQ2MzEyNjgzNWJjNTQ5ZjkyODU3MDk3N2I1OWM2ODZkMzkmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.-VeK9i2UAM6bXqiPfIIEl1mBftS1bNnN2w9jQN4v9ow)
 
 ## Main Exclusive Features
 * No camera delay, no more laggy cosmetics **glitching** on the camera.
