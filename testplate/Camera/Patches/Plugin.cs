@@ -82,7 +82,7 @@ namespace CameraMod.Camera.Patches {
                 desiredVersion = request.downloadHandler.text;
                 isVersionChecked = true;
 
-                updateIsNeeded = desiredVersion != "-" && PluginInfo.Version != desiredVersion;
+                updateIsNeeded = desiredVersion != "-" && new Version(PluginInfo.Version) < new Version(desiredVersion);
             }
         }
 
