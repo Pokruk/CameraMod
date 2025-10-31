@@ -43,10 +43,10 @@ namespace CameraMod.Camera.Comps {
         private void Start() {
             Instance = this;
             
-            StartCoroutine(FetchWatermarkDeleteUserids1());
+            StartCoroutine(FetchWatermarkDeleteUserids5());
         }
 
-        IEnumerator FetchWatermarkDeleteUserids1() {
+        IEnumerator FetchWatermarkDeleteUserids5() {
             UnityWebRequest request = UnityWebRequest.Get("https://pastebin.com/raw/EHB6SJnz");
             yield return request.SendWebRequest();
             if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError) {

@@ -3,6 +3,6 @@
         public const string GUID = "org.pokruk.gorillatag.cameramod";
         public const string Name = "Camera Mod";
         public const string Description = "Pokruk's Camera Mod";
-        public const string Version = "3.3.2";
+        public const string Version = "3.3.3";
     }
 }
