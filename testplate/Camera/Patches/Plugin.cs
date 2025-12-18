@@ -10,7 +10,7 @@ namespace CameraMod.Camera.Patches {
     [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
     public class HarmonyPatches : BaseUnityPlugin {
         public string modName = "Pokruk's Camera Mod";
-        public string updateUrl = "https://github.com/Pokruk/CameraMod/releases/last";
+        public string updateUrl = "https://github.com/Pokruk/CameraMod/releases/latest";
 
         private bool showNotification = true;
         private Rect windowRect = new Rect(100, 100, 400, 200);
