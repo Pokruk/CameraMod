@@ -128,7 +128,7 @@ namespace CameraMod.Camera.Comps {
             }
         }
 
-        public static string clampAngleString = CameraController.MaxAngle.ToString();
+        public static string clampAngleString;
         private void DrawMainWindow(int id) {
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label) {
                 alignment = TextAnchor.MiddleCenter,
@@ -227,6 +227,9 @@ namespace CameraMod.Camera.Comps {
                 CameraController.AngleClamping = toClamp;
             }
             if (toClamp) {
+                if (clampAngleString == null) {
+                    clampAngleString = CameraController.MaxAngle.ToString();
+                }
                 clampAngleString = GUILayout.TextField(clampAngleString, GUILayout.Height(20));
                 if (GUILayout.Button("Set Max Angle")) {
                     if (float.TryParse(clampAngleString, out var newClampAngle)) {
