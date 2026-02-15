@@ -81,13 +81,8 @@ namespace CameraMod.Camera.Comps {
             GUI.Label(labelRect, "Pokruk's Camera Mod", style);
         }
 
-        public bool IsSpecMode() {
-            return !CameraController.Instance.fpv && !CameraController.Instance.fp && !CameraController.Instance.tpv;
-        }
         public void SpecMode() {
-            CameraController.Instance.fpv = false;
-            CameraController.Instance.fp = false;
-            CameraController.Instance.tpv = false;
+            CameraController.Instance.cameraMode = CameraMode.None;
         }
 
         public string roomToJoin = "";

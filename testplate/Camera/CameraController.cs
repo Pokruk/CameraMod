@@ -20,6 +20,13 @@ namespace CameraMod.Camera {
         LateUpdate
     }
 
+    public enum CameraMode {
+        ThirdPerson,
+        FirstPersonView,
+        FollowPlayer,
+        None
+    }
+    
     public class CameraController : MonoBehaviour {
         public enum TpvModes {
             Back,
@@ -53,9 +60,7 @@ namespace CameraMod.Camera {
         public bool followheadrot = true;
         public bool isFaceCamera;
         
-        public bool tpv;
-        public bool fpv = true;
-        public bool fp;
+        public CameraMode cameraMode = CameraMode.FirstPersonView;
         
         public float minDist = 2f;
         public float fpspeed = 0.01f;
@@ -250,8 +255,7 @@ namespace CameraMod.Camera {
                 Flip();
             }
 
-            fp = false;
-            fpv = true;
+            cameraMode = CameraMode.FirstPersonView;
             UI.Instance.freecam = false;
         }
         
@@ -285,7 +289,7 @@ namespace CameraMod.Camera {
                 Flip();
             });
             
-            AddTabletButton("MainPage/FPButton", () => fp = !fp);
+            AddTabletButton("MainPage/FPButton", () => cameraMode = cameraMode == CameraMode.FollowPlayer ? CameraMode.None : CameraMode.FollowPlayer);
             
             buttons.Add(cameraTabletT.Find("MainPage/RollLock").AddComponent<ToggleButton>()
                     .InitToggleButton(setter: b => RollLock = b, getter: () => RollLock));
@@ -301,9 +305,7 @@ namespace CameraMod.Camera {
                     }
                 }
 
-                fp = false;
-                fpv = false;
-                tpv = true;
+                cameraMode = CameraMode.ThirdPerson;
             });
             
             AddTabletButton("MiscPage/MinDistDownButton", () => {
@@ -402,7 +404,7 @@ namespace CameraMod.Camera {
         public void AnUpdate() {
             if (!init) return;
 
-            if (fpv) {
+            if (cameraMode == CameraMode.FirstPersonView) {
                 if (mainPage.GO.active) {
                     SetTabletVisibility(false);
                     mainPage.GO.active = false;
@@ -423,9 +425,7 @@ namespace CameraMod.Camera {
             }
 
             if (BindEnabled && Binds.Tablet() && cameraTabletT.parent == null) {
-                fp = false;
-                fpv = false;
-                tpv = false;
+                cameraMode = CameraMode.None;
                 if (!mainPage.GO.active) {
                     foreach (var btns in buttons) btns.gameObject.SetActive(true);
                     SetTabletVisibility(true);
@@ -440,7 +440,7 @@ namespace CameraMod.Camera {
                 cameraTabletT.Rotate(0f, -180f, 0f);
             }
 
-            if (fp) {
+            if (cameraMode == CameraMode.FollowPlayer) {
                 cameraTabletT.LookAt(2f * cameraTabletT.position - cameraFollowerT.position);
                 if (!isFaceCamera) {
                     Flip();
@@ -454,7 +454,7 @@ namespace CameraMod.Camera {
                         fpspeed);
             }
 
-            if (tpv) {
+            if (cameraMode == CameraMode.ThirdPerson) {
                 if (mainPage.GO.active) {
                     SetTabletVisibility(false);
                     mainPage.GO.active = false;
@@ -493,7 +493,7 @@ namespace CameraMod.Camera {
                     
                     SetTabletVisibility(true);
                     cameraTabletT.parent = null;
-                    tpv = false;
+                    cameraMode = CameraMode.None;
                 }
             }
         }

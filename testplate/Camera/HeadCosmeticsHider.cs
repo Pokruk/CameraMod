@@ -33,7 +33,7 @@ namespace CameraMod.Camera {
         }
 
         public override void Hide() {
-            if (!CameraController.Instance.fpv) return;
+            if (CameraController.Instance.cameraMode != CameraMode.FirstPersonView) return;
 
             setHeadCosmeticsEnabled(false);
         }

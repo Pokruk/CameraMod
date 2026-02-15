@@ -13,9 +13,9 @@ namespace CameraMod.Camera.Comps {
 
         private void OnTriggerStay(Collider col) {
             if (col.name.Contains("Right"))
-                if (InputManager.instance.RightGrip & !controller.fpv) {
+                if (InputManager.instance.RightGrip & controller.cameraMode != CameraMode.FirstPersonView) {
                     tabletT.parent = rightHandT;
-                    if (controller.fp) controller.fp = false;
+                    if (controller.cameraMode == CameraMode.FollowPlayer) controller.cameraMode = CameraMode.None;
                 }
 
             if (!InputManager.instance.RightGrip & (tabletT.parent == rightHandT))
