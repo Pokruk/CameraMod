@@ -146,7 +146,6 @@ namespace CameraMod.Camera.Comps {
                         CameraController.Instance.isFaceCamera = true;
                         CameraController.Instance.thirdPersonCameraT.Rotate(0, 180, 0);
                         CameraController.Instance.tabletCameraT.Rotate(0, 180, 0);
-                        CameraController.Instance.fakeWebCamT.Rotate(-180, 180, 0);
                     }
 
                     SpecMode();

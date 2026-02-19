@@ -43,7 +43,6 @@ namespace CameraMod.Camera {
         public Transform tpvBodyFollowerT;
         
         public Transform thirdPersonCameraT;
-        public Transform fakeWebCamT;
         public Transform tabletCameraT;
         
         public MainPage mainPage;
@@ -162,7 +161,6 @@ namespace CameraMod.Camera {
             tabletCameraT = cameraTabletT.Find("Camera");
             tabletCamera = tabletCameraT.GetComponent<UnityEngine.Camera>();
             
-            fakeWebCamT = cameraTabletT.Find("FakeCamera");
             cameraTabletT.Find("LeftGrabCol").AddComponent<LeftGrabTrigger>();
             cameraTabletT.Find("RightGrabCol").AddComponent<RightGrabTrigger>();
             mainPage = new MainPage(cameraTabletT.Find("MainPage"));
@@ -208,7 +206,6 @@ namespace CameraMod.Camera {
             miscPage.GO.SetActive(false);
             thirdPersonCamera.nearClipPlane = 0.1f;
             tabletCamera.nearClipPlane = 0.1f;
-            fakeWebCamT.Rotate(-180, 180, 0);
             init = true;
             
             var fov = PlayerPrefs.GetInt("CameraFov", 100);
@@ -230,7 +227,6 @@ namespace CameraMod.Camera {
             isFaceCamera = !isFaceCamera;
             thirdPersonCameraT.Rotate(0.0f, 180f, 0.0f);
             tabletCameraT.Rotate(0.0f, 180f, 0.0f);
-            fakeWebCamT.Rotate(-180f, 180f, 0.0f);
         }
 
         private float lastPageChangedTime;
