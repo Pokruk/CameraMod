@@ -2,9 +2,9 @@
 using HarmonyLib;
 
 namespace CameraMod.Camera.Patches {
-    [HarmonyPatch(typeof(CosmeticItemRegistry), nameof(CosmeticItemRegistry.Initialize))]
+    [HarmonyPatch(typeof(CosmeticsV2Spawner_Dirty), nameof(CosmeticsV2Spawner_Dirty.ProcessLoadOpInfos))]
     public class CosmeticsLoaded {
-        public static void Postfix(CosmeticItemRegistry __instance) {
+        public static void Postfix() {
             CameraController.Instance.InitCosmeticsHider();
         }
     }
