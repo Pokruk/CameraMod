@@ -254,13 +254,14 @@ namespace CameraMod.Camera.Comps {
 
             GUILayout.Label("Players", titleStyle);
             GUILayout.Space(5);
-
-            foreach (var player in GorillaParent.instance.vrrigs
-                             .Where(rig => rig != GorillaTagger.Instance.offlineVRRig)) {
+            
+            foreach (var player in PhotonNetwork.PlayerListOthers) {
+                if (!VRRigCache.Instance.TryGetVrrig(player, out var vrrig))
+                    return;
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(player.playerNameVisible);
+                GUILayout.Label(player.NickName);
                 if (GUILayout.Button("Spectate", GUILayout.Width(80))) {
-                    followobject = player.gameObject;
+                    followobject = vrrig.gameObject;
                     spectating = true;
                     SpecMode();
                     if (CameraController.Instance.isFaceCamera)
