@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using CameraMod.Extensions.GUI;
 using GorillaLocomotion;
 using GorillaNetworking;
 using Photon.Pun;
@@ -123,6 +124,7 @@ namespace CameraMod.Camera.Comps {
             }
         }
 
+        public static GUIVector3 fpOffsetGUI = new GUIVector3(CameraController.FirstPersonOffset);
         public static string clampAngleString;
         private void DrawMainWindow(int id) {
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label) {
@@ -154,6 +156,8 @@ namespace CameraMod.Camera.Comps {
                     CameraController.Instance.EnableFPV();
                 }
             }
+            
+            fpOffsetGUI.Draw();
 
             // Spectator controls
             GUILayout.BeginHorizontal();

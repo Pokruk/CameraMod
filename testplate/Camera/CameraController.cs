@@ -395,6 +395,8 @@ namespace CameraMod.Camera {
                 PlayerPrefs.SetInt("AngleClamping", value ? 1 : 0);
             }
         }
+
+        public static Vector3 FirstPersonOffset = new Vector3();
         
         public static bool RollLock = true;
         public void AnUpdate() {
@@ -407,8 +409,8 @@ namespace CameraMod.Camera {
                 }
                 var camera = cameraTabletT;
                 var follower = cameraFollowerT;
-
-                camera.position = follower.position;
+                
+                camera.position = follower.TransformPoint(FirstPersonOffset);
                 if (AngleClamping && Quaternion.Angle(camera.rotation, follower.rotation) > maxAngle) {
                     camera.rotation = Quaternion.RotateTowards(follower.rotation, camera.rotation, maxAngle);
                 }
