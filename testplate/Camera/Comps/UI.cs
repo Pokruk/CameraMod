@@ -124,7 +124,7 @@ namespace CameraMod.Camera.Comps {
             }
         }
 
-        public static GUIVector3 fpOffsetGUI = new GUIVector3(CameraController.FirstPersonOffset);
+        public static GUIVector3 fpOffsetGUI = new GUIVector3();
         public static string clampAngleString;
         private void DrawMainWindow(int id) {
             GUIStyle titleStyle = new GUIStyle(GUI.skin.label) {
@@ -156,8 +156,6 @@ namespace CameraMod.Camera.Comps {
                     CameraController.Instance.EnableFPV();
                 }
             }
-            
-            fpOffsetGUI.Draw();
 
             // Spectator controls
             GUILayout.BeginHorizontal();
@@ -185,13 +183,17 @@ namespace CameraMod.Camera.Comps {
             speclookat = GUILayout.Toggle(speclookat, "Spectator Stare");
 
             GUILayout.Space(5);
-            GUILayout.Label("Spectator Offset");
+            GUILayout.Label("Spectator View Offset");
             GUILayout.BeginHorizontal();
             specoffset.x = GUILayout.HorizontalSlider(specoffset.x, -3, 3);
             specoffset.y = GUILayout.HorizontalSlider(specoffset.y, -3, 3);
             specoffset.z = GUILayout.HorizontalSlider(specoffset.z, -3, 3);
             GUILayout.EndHorizontal();
-
+            
+            GUILayout.Space(5);
+            GUILayout.Label("First Person View Offset");
+            fpOffsetGUI.Draw(ref CameraController.FirstPersonOffset);
+            
             GUILayout.Space(5);
             GUILayout.Label("Freecam Speed");
             freecamspeed = GUILayout.HorizontalSlider(freecamspeed, 0.01f, 0.4f);

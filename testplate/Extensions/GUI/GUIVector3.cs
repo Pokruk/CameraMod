@@ -2,26 +2,23 @@
 
 namespace CameraMod.Extensions.GUI {
     public class GUIVector3 {
-        public Vector3 value;
         
         private GUIFloatField x;
         private GUIFloatField y;
         private GUIFloatField z;
         
-        public GUIVector3(Vector3 value) {
-            this.value = value;
-            x = new GUIFloatField(value.x);
-            y = new GUIFloatField(value.y);
-            z = new GUIFloatField(value.z);
+        public GUIVector3() {
+            x = new GUIFloatField();
+            y = new GUIFloatField();
+            z = new GUIFloatField();
         }
 
-        public void Draw() {
+        public void Draw(ref Vector3 value) {
             GUILayout.BeginHorizontal();
 
-            x.Draw();
-            y.Draw();
-            z.Draw();
-            value = new Vector3(x.value, y.value, z.value);
+            x.Draw(ref value.x);
+            y.Draw(ref value.y);
+            z.Draw(ref value.z);
 
             GUILayout.EndHorizontal();
         }
