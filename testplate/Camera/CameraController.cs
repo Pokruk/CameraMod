@@ -401,7 +401,10 @@ namespace CameraMod.Camera {
             }
         }
 
-        public static Vector3 FirstPersonOffset = new Vector3();
+        public static Vector3 FirstPersonOffset = new Vector3(
+            PlayerPrefs.GetFloat("FPOffset_x", 0f), 
+            PlayerPrefs.GetFloat("FPOffset_y", 0f),
+            PlayerPrefs.GetFloat("FPOffset_z", 0f));
         
         public static bool RollLock = true;
         public void AnUpdate() {

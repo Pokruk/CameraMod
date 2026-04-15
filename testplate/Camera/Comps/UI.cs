@@ -175,7 +175,13 @@ namespace CameraMod.Camera.Comps {
             
             GUILayout.Space(5);
             GUILayout.Label("First Person View Offset");
+            var lastFPOffset = CameraController.FirstPersonOffset;
             fpOffsetGUI.Draw(ref CameraController.FirstPersonOffset);
+            if (lastFPOffset != CameraController.FirstPersonOffset) {
+                PlayerPrefs.SetFloat("FPOffset_x", CameraController.FirstPersonOffset.x);
+                PlayerPrefs.SetFloat("FPOffset_y", CameraController.FirstPersonOffset.y);
+                PlayerPrefs.SetFloat("FPOffset_z", CameraController.FirstPersonOffset.z);
+            }
             
             GUILayout.Space(5);
             GUILayout.Label("Freecam Speed");
