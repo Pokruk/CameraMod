@@ -48,6 +48,7 @@ namespace CameraMod.Camera.Comps {
         private void LateUpdate() {
             Spec();
             Freecam();
+            PhotonNetworkController.Instance.disableAFKKick = spectating || freecam;
         }
 
         private void WaterMark() {

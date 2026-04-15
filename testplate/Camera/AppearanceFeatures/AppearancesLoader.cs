@@ -11,7 +11,6 @@ namespace CameraMod.Camera.AppearanceFeatures {
             void LoadPrefab(string name) {
                 var meshPrefab = appearancesGO.transform.Find(name).gameObject;
                 appearancePrefabs[name] = meshPrefab;
-                isLoaded = true;
             }
 
             LoadPrefab("Default");
