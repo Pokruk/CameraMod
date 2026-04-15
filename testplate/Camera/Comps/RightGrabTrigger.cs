@@ -3,11 +3,14 @@
 #pragma warning disable CS0618
 namespace CameraMod.Camera.Comps {
     internal class RightGrabTrigger : MonoBehaviour {
-        private Transform rightHandT => GorillaTagger.Instance.rightHandTransform;
+        public static RightGrabTrigger instance;
+        
+        public Transform rightHandT => GorillaTagger.Instance.rightHandTransform;
         private CameraController controller => CameraController.Instance;
         private Transform tabletT => controller.cameraTabletT;
         
         private void Start() {
+            instance = this;
             gameObject.layer = 18;
         }
 

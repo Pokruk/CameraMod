@@ -5,6 +5,7 @@ using System.Reflection;
 using CameraMod.Button;
 using CameraMod.Button.Buttons;
 using CameraMod.Camera.Comps;
+using CameraMod.Camera.Networking;
 using CameraMod.Camera.Pages;
 using GorillaLocomotion;
 using Unity.Cinemachine;
@@ -400,6 +401,7 @@ namespace CameraMod.Camera {
         
         public static bool RollLock = true;
         public void AnUpdate() {
+            ReplicationHandler.Lerp();
             if (!init) return;
 
             if (cameraMode == CameraMode.FirstPersonView) {
