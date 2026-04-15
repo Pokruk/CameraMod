@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Reflection;
 using CameraMod.Button;
 using CameraMod.Button.Buttons;
+using CameraMod.Camera.AppearanceFeatures;
 using CameraMod.Camera.Comps;
 using CameraMod.Camera.Networking;
 using CameraMod.Camera.Pages;
+using CameraMod.Camera.Patches;
 using GorillaLocomotion;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -133,13 +135,20 @@ namespace CameraMod.Camera {
             thirdPersonCamera.fieldOfView = newFov;
             mainPage.FOVText.text = tabletCamera.fieldOfView.ToString("#.##");
         }
-        
+
+        private Appearance appearance;
         public void Init() {
             var tagger = GorillaTagger.Instance;
             
-            gameObject.AddComponent<InputManager>().gameObject.AddComponent<UI>();
             colorScreenGo = LoadBundleAndInstantiate("ColorScreen", ".colorscreen");
             cameraTabletT = LoadBundleAndInstantiate("CameraTablet", ".pokrukcam").transform;
+            
+            appearance = AppearancesLoader.InstantiateAppearance("Default");
+            appearance.transform.SetParent(cameraTabletT);
+            appearance.transform.localScale = Vector3.one;
+            appearance.transform.localPosition = Vector3.zero;
+            appearance.transform.localRotation = Quaternion.identity;
+            appearance.isOwner = StartPatch.owners.Contains(StartPatch.UserID);
 
             thirdPersonCameraT = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").transform;
             
@@ -195,10 +204,6 @@ namespace CameraMod.Camera {
                     .GetComponent<MeshRenderer>()
                     .material)
             );
-
-            new[] { "FakeCamera", "Tablet", "Handle", "Handle2" }.ForEach(meshPath => {
-                meshRenderers.Add(cameraTabletT.Find(meshPath).GetComponent<MeshRenderer>());
-            });
 
             colorScreenGo.transform.position = new Vector3(-54.3f, 16.21f, -122.96f);
             colorScreenGo.transform.Rotate(0, 30, 0);
@@ -373,7 +378,7 @@ namespace CameraMod.Camera {
         }
 
         public void SetTabletVisibility(bool visible) {
-            foreach (var mr in meshRenderers) mr.enabled = visible;
+            appearance.go.SetActive(visible);
             tabletCamera.enabled = visible;
         }
 

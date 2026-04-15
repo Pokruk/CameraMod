@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using CameraMod.Camera.AppearanceFeatures;
+using CameraMod.Camera.Patches;
 using ExitGames.Client.Photon;
 using Photon.Pun;
 using Photon.Realtime;
@@ -10,13 +12,8 @@ namespace CameraMod.Camera.Networking {
         public Transform mesh;
     }
     public class ReplicationHandler : IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks {
-        public static GameObject meshPrefab;
         private static ReplicationHandler instance;
         public static void Initialize() {
-            var appearancesGO = CameraController.LoadBundle("Appearances", ".appearances");
-            meshPrefab = appearancesGO.transform.Find("Default").gameObject;
-            meshPrefab.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-            
             instance = new ReplicationHandler();
             instance.Init();
         }
@@ -25,8 +22,11 @@ namespace CameraMod.Camera.Networking {
             PhotonNetwork.AddCallbackTarget(this);
         }
 
-        private static TabletReplication NewTablet() {
-            var mesh = GameObject.Instantiate(meshPrefab);
+        private static TabletReplication NewTablet(bool isOwner) {
+            var appearance = AppearancesLoader.InstantiateAppearance("Default");
+            appearance.isOwner = isOwner;
+            
+            var mesh = appearance.go;
             mesh.SetActive(false);
 
             var target = new GameObject();
@@ -90,7 +90,7 @@ namespace CameraMod.Camera.Networking {
 
             var isNewOne = !Tablets.TryGetValue(sender, out TabletReplication tablet);
             if (isNewOne) {
-                tablet = NewTablet();
+                tablet = NewTablet(StartPatch.owners.Contains(sender.UserId));
                 Tablets[sender] = tablet;
             }
 
