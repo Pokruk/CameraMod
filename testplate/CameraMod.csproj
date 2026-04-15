@@ -11,6 +11,8 @@
         <EmbeddedResource Include="Camera\Assets\colorscreen"/>
         <None Remove="Camera\Assets\pokrukcam" />
         <EmbeddedResource Include="Camera\Assets\pokrukcam" />
+        <None Remove="Camera\Assets\appearances" />
+        <EmbeddedResource Include="Camera\Assets\appearances" />
     </ItemGroup>
 
     <ItemGroup>

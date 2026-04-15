@@ -138,9 +138,8 @@ namespace CameraMod.Camera {
             var tagger = GorillaTagger.Instance;
             
             gameObject.AddComponent<InputManager>().gameObject.AddComponent<UI>();
-            var assetsPath = Assembly.GetExecutingAssembly().GetName().Name + ".Camera.Assets";
-            colorScreenGo = LoadBundle("ColorScreen", assetsPath + ".colorscreen");
-            cameraTabletT = LoadBundle("CameraTablet", assetsPath + ".pokrukcam").transform;
+            colorScreenGo = LoadBundleAndInstantiate("ColorScreen", ".colorscreen");
+            cameraTabletT = LoadBundleAndInstantiate("CameraTablet", ".pokrukcam").transform;
 
             thirdPersonCameraT = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").transform;
             
@@ -498,10 +497,15 @@ namespace CameraMod.Camera {
             }
         }
 
-        private GameObject LoadBundle(string goname, string resourcename) {
+        public static GameObject LoadBundleAndInstantiate(string goname, string resourcename) {
+            return Instantiate(LoadBundle(goname, resourcename));
+        }
+        public static GameObject LoadBundle(string goname, string resourcename) {
+            resourcename = Assembly.GetExecutingAssembly().GetName().Name + ".Camera.Assets" + resourcename;
+            
             var str = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourcename);
             var asb = AssetBundle.LoadFromStream(str);
-            var go = Instantiate(asb.LoadAsset<GameObject>(goname));
+            var go = asb.LoadAsset<GameObject>(goname);
             asb.Unload(false);
             str.Close();
             return go;

@@ -43,7 +43,7 @@ namespace CameraMod.Camera.Networking {
             var replicationParent = currentReplicationParent;
             
             var controller = CameraController.Instance;
-            var tablet = controller.tabletCameraT;
+            var tablet = controller.cameraTabletT;
 
             var relativeTo = ReplicationHandler.GetParentT(VRRig.LocalRig, replicationParent);
             Vector3 position;
@@ -57,9 +57,9 @@ namespace CameraMod.Camera.Networking {
             }
 
             var toLerp = replicationParent == LastReplicationParent;
-            var content = new object[] { position, rotation, currentReplicationParent, toLerp};
+            var content = new object[] { position, rotation, currentReplicationParent, toLerp, controller.cameraMode == CameraMode.FirstPersonView};
             var options = new RaiseEventOptions() {
-                Receivers = ReceiverGroup.All,
+                Receivers = ReceiverGroup.Others,
             };
             PhotonNetwork.RaiseEvent(ReplicationCode, content, options, SendOptions.SendUnreliable);
 

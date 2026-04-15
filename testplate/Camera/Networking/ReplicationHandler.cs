@@ -10,8 +10,13 @@ namespace CameraMod.Camera.Networking {
         public Transform mesh;
     }
     public class ReplicationHandler : IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks {
+        public static GameObject meshPrefab;
         private static ReplicationHandler instance;
         public static void Initialize() {
+            var appearancesGO = CameraController.LoadBundle("Appearances", ".appearances");
+            meshPrefab = appearancesGO.transform.Find("Default").gameObject;
+            meshPrefab.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+            
             instance = new ReplicationHandler();
             instance.Init();
         }
@@ -21,15 +26,7 @@ namespace CameraMod.Camera.Networking {
         }
 
         private static TabletReplication NewTablet() {
-            var mesh = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            GameObject.Destroy(mesh.GetComponent<Collider>());
-            GameObject.Destroy(mesh.GetComponent<Rigidbody>());
-            var renderer = mesh.GetComponent<MeshRenderer>();
-            var shader = Shader.Find("GorillaTag/UberShader");
-            
-            renderer.material.shader = shader;
-            
-            mesh.transform.localScale = new Vector3(0.5f, 0.2f, 0.5f);
+            var mesh = GameObject.Instantiate(meshPrefab);
             mesh.SetActive(false);
 
             var target = new GameObject();
@@ -50,18 +47,21 @@ namespace CameraMod.Camera.Networking {
 
             object[] content = photonEvent.CustomData as object[];
             if (content == null) return;
-            if (content.Length < 4)  return;
+            if (content.Length < 5)  return;
             
             if (!(content[0] is Vector3)) return;
             if (!(content[1] is Quaternion)) return;
             if (!(content[2] is int)) return;
             if (!(content[3] is bool)) return;
+            if (!(content[4] is bool)) return;
+            
             Vector3 position = (Vector3)content[0];
             Quaternion rotation = (Quaternion)content[1];
             ReplicationParent replicationParent = (ReplicationParent)content[2];
             bool toLerp = (bool)content[3];
+            bool isFirstPerson = (bool)content[4];
             
-            OnDataReceived(sender, position, rotation, replicationParent, toLerp);
+            OnDataReceived(sender, position, rotation, replicationParent, toLerp, isFirstPerson);
         }
         
         private static Dictionary<Player, TabletReplication> Tablets = new Dictionary<Player, TabletReplication>();
@@ -81,20 +81,26 @@ namespace CameraMod.Camera.Networking {
             }
             return null;
         }
-        private void OnDataReceived(Player sender, Vector3 position, Quaternion rotation, ReplicationParent replicationParent, bool toLerp) {
+        private void OnDataReceived(Player sender, Vector3 position, Quaternion rotation, ReplicationParent replicationParent, bool toLerp, bool isFirstPerson) {
             var rig = GorillaGameManager.instance.FindPlayerVRRig(sender);
             if (rig == null) {
                 Debug.Log("Rig not found");
                 return;
             }
-            Transform parentT = GetParentT(rig, replicationParent);
 
             var isNewOne = !Tablets.TryGetValue(sender, out TabletReplication tablet);
             if (isNewOne) {
                 tablet = NewTablet();
                 Tablets[sender] = tablet;
             }
+
+            if (isFirstPerson) {
+                tablet.mesh.gameObject.SetActive(false);
+                return;
+            }
+            tablet.mesh.gameObject.SetActive(true);
             
+            Transform parentT = GetParentT(rig, replicationParent);
             tablet.target.parent = parentT;
             tablet.mesh.parent = parentT;
             
@@ -106,7 +112,6 @@ namespace CameraMod.Camera.Networking {
                 tablet.mesh.position = tablet.target.position;
                 tablet.mesh.rotation = tablet.target.rotation;
             }
-            
             tablet.mesh.gameObject.SetActive(true);
         }
         
