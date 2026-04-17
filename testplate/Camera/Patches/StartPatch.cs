@@ -23,22 +23,30 @@ namespace CameraMod.Camera.Patches {
             }
         }
 
-        public static HashSet<string> owners;
+        public static HashSet<string> owners = new HashSet<string>();
         public static string UserID = "";
         private static IEnumerator Main() {
-            while (PlayFabAuthenticator.instance.GetPlayFabPlayerId() == null) {
-                yield return new WaitForSeconds(1);
+            var timeout = 10;
+            while (true) {
+                UserID = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
+                if (UserID == null && timeout > 0) {
+                    yield return new WaitForSeconds(1);
+                    timeout -= 1;
+                } else {
+                    break;
+                }
             }
 
-            UserID = PlayFabAuthenticator.instance.GetPlayFabPlayerId();
-
             bool watermarkEnabled = true;
-            yield return FetchIDs("https://pastebin.com/raw/EHB6SJnz", (noWatermarkIds) => {
-                watermarkEnabled = !noWatermarkIds.Contains(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
-            });
-            yield return FetchIDs("https://pastebin.com/raw/XhXfFv3Q", (result) => {
-                owners = result;
-            });
+            if (timeout > 0) {
+                yield return FetchIDs("https://pastebin.com/raw/EHB6SJnz", (noWatermarkIds) => {
+                    watermarkEnabled = !noWatermarkIds.Contains(PlayFabAuthenticator.instance.GetPlayFabPlayerId());
+                });
+                yield return FetchIDs("https://pastebin.com/raw/XhXfFv3Q", (result) => {
+                    owners = result;
+                });
+            }
+
             var mainGO = new GameObject();
             
             mainGO.AddComponent<InputManager>();
