@@ -3,6 +3,7 @@ using CameraMod.Camera.AppearanceFeatures;
 using CameraMod.Camera.Patches;
 using ExitGames.Client.Photon;
 using Photon.Pun;
+using Photon.Pun.UtilityScripts;
 using Photon.Realtime;
 using UnityEngine;
 
@@ -12,10 +13,28 @@ namespace CameraMod.Camera.Networking {
         public Transform mesh;
     }
     public class ReplicationHandler : IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks {
+        private static string hideOtherTabletsPref = "pokruk_hideOtherTablets";
+        private static bool hideOtherTablets = false;
+        public static bool HideOtherTablets {
+            get => hideOtherTablets;
+            set {
+                if (value) {
+                    foreach (var (player, _) in Tablets) {
+                        DestroyTablet(player);
+                    }
+                    Tablets.Clear();
+                }
+                PlayerPrefs.SetInt(hideOtherTabletsPref, value ? 1 : 0);
+                hideOtherTablets = value;
+            }
+        }
+        
         private static ReplicationHandler instance;
         public static void Initialize() {
             instance = new ReplicationHandler();
             instance.Init();
+            
+            HideOtherTablets = PlayerPrefs.GetInt(hideOtherTabletsPref, 0) == 1;
         }
         
         private void Init() {
@@ -38,6 +57,10 @@ namespace CameraMod.Camera.Networking {
         }
         
         public void OnEvent(EventData photonEvent) {
+            if (HideOtherTablets) {
+                return;
+            }
+            
             if (photonEvent.Code != ReplicationPatch.ReplicationCode) {
                 return;
             }
@@ -122,12 +145,16 @@ namespace CameraMod.Camera.Networking {
                 tablet.mesh.localRotation = Quaternion.Lerp(tablet.mesh.localRotation, tablet.target.localRotation, 0.1f);
             }
         }
-        public void OnPlayerLeftRoom(Player player) {
+
+        public static void DestroyTablet(Player player) {
             if (Tablets.TryGetValue(player, out TabletReplication tablet)) {
                 GameObject.Destroy(tablet.target.gameObject);
                 GameObject.Destroy(tablet.mesh.gameObject);
-                Tablets.Remove(player);
             }
+        }
+        public void OnPlayerLeftRoom(Player player) {
+            DestroyTablet(player);
+            Tablets.Remove(player);
         }
         public void OnDisconnected(DisconnectCause cause) {
             foreach (var tabletReplication in Tablets) {

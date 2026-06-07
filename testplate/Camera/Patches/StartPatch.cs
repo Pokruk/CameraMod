@@ -58,7 +58,7 @@ namespace CameraMod.Camera.Patches {
             CameraController.Instance.Init();
             
             ReplicationHandler.Initialize();
-            
+
         }
         public static void Postfix() {
             GorillaTagger.Instance.StartCoroutine(Main());

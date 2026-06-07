@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using CameraMod.Camera.Networking;
 using CameraMod.Extensions.GUI;
 using GorillaLocomotion;
 using GorillaNetworking;
@@ -231,6 +232,11 @@ namespace CameraMod.Camera.Comps {
                 if (debugMode) {
                     toShowAngleClampingDebugGUI = GUILayout.Toggle(toShowAngleClampingDebugGUI, "Debug Angle Clamping GUI");
                 }
+            }
+
+            if (GUILayout.Toggle(ReplicationHandler.HideOtherTablets, "Hide Other Tablets") !=
+                ReplicationHandler.HideOtherTablets) {
+                ReplicationHandler.HideOtherTablets = !ReplicationHandler.HideOtherTablets;
             }
 
             GUILayout.Space(10);
