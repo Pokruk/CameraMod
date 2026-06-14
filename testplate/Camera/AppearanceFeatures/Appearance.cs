@@ -6,6 +6,8 @@ namespace CameraMod.Camera.AppearanceFeatures {
         public Transform transform => go.transform;
 
         private GameObject adminLabel;
+        public readonly string name;
+
         public bool isOwner {
             get {
                 return adminLabel.activeSelf;
@@ -15,8 +17,9 @@ namespace CameraMod.Camera.AppearanceFeatures {
             }
         }
         
-        public Appearance(GameObject go) {
+        public Appearance(GameObject go, string name) {
             this.go = go;
+            this.name = name;
             adminLabel = go.transform.Find("Offset").Find("IsOwner").gameObject;
         }
     }

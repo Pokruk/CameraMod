@@ -151,10 +151,7 @@ namespace CameraMod.Camera {
         }
 
         private string skinPrefKey = "PokruksSkin";
-        private string currentSkinName = "Default";
         private void SetSkin(string skinName) {
-            currentSkinName = skinName;
-            
             if (appearance != null) {
                 Destroy(appearance.go);
             }
@@ -164,7 +161,7 @@ namespace CameraMod.Camera {
             PlayerPrefs.SetString(skinPrefKey, GetSkin());
         }
         private string GetSkin() {
-            return currentSkinName;
+            return appearance.name;
         }
         
         public void Init() {

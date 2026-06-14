@@ -30,7 +30,7 @@ namespace CameraMod.Camera.AppearanceFeatures {
         public static AppearanceFeatures.Appearance InstantiateAppearance(string name) {
             var instance = InstantiateAppearanceGO(name);
             instance.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
-            return new AppearanceFeatures.Appearance(instance);
+            return new AppearanceFeatures.Appearance(instance, name);
         }
     }
 }
