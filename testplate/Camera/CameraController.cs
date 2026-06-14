@@ -137,18 +137,43 @@ namespace CameraMod.Camera {
         }
 
         private Appearance appearance;
-        public void Init() {
-            var tagger = GorillaTagger.Instance;
+
+        private void InitAppearance() {
+            if (appearance == null) {
+                throw new ArgumentNullException();
+            }
             
-            colorScreenGo = LoadBundleAndInstantiate("ColorScreen", ".colorscreen");
-            cameraTabletT = LoadBundleAndInstantiate("CameraTablet", ".pokrukcam").transform;
-            
-            appearance = AppearancesLoader.InstantiateAppearance("Purple");
             appearance.transform.SetParent(cameraTabletT);
             appearance.transform.localScale = Vector3.one;
             appearance.transform.localPosition = Vector3.zero;
             appearance.transform.localRotation = Quaternion.identity;
             appearance.isOwner = StartPatch.owners.Contains(StartPatch.UserID);
+        }
+
+        private string skinPrefKey = "PokruksSkin";
+        private string currentSkinName = "Default";
+        private void SetSkin(string skinName) {
+            currentSkinName = skinName;
+            
+            if (appearance != null) {
+                Destroy(appearance.go);
+            }
+            appearance = AppearancesLoader.InstantiateAppearance(skinName);
+            InitAppearance();
+            
+            PlayerPrefs.SetString(skinPrefKey, GetSkin());
+        }
+        private string GetSkin() {
+            return currentSkinName;
+        }
+        
+        public void Init() {
+            var tagger = GorillaTagger.Instance;
+            
+            colorScreenGo = LoadBundleAndInstantiate("ColorScreen", ".colorscreen");
+            cameraTabletT = LoadBundleAndInstantiate("CameraTablet", ".pokrukcam").transform;
+
+            SetSkin(PlayerPrefs.GetString(skinPrefKey, "Default"));
 
             thirdPersonCameraT = GameObject.Find("Player Objects/Third Person Camera/Shoulder Camera").transform;
             
@@ -354,6 +379,12 @@ namespace CameraMod.Camera {
             
             buttons.Add(cameraTabletT.Find("MiscPage/GreenScreenButton").AddComponent<ToggleButton>()
                     .InitToggleButton(setter: b => colorScreenGo.active = b, getter: () => colorScreenGo.active));
+
+            foreach (Transform child in cameraTabletT.Find("MiscPage/Skins")) {
+                AddTabletButton("MiscPage/Skins/"+child.name, () => {
+                    SetSkin(child.name);
+                });
+            }
         }
 
         public ClickButton Button(Transform t, Action onClick) {
