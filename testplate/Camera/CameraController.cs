@@ -160,7 +160,7 @@ namespace CameraMod.Camera {
             
             PlayerPrefs.SetString(skinPrefKey, GetSkin());
         }
-        private string GetSkin() {
+        public string GetSkin() {
             return appearance.name;
         }
         

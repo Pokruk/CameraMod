@@ -57,7 +57,7 @@ namespace CameraMod.Camera.Networking {
             }
 
             var toLerp = replicationParent == LastReplicationParent;
-            var content = new object[] { position, rotation, currentReplicationParent, toLerp, controller.cameraMode == CameraMode.FirstPersonView};
+            var content = new object[] { position, rotation, currentReplicationParent, toLerp, controller.cameraMode == CameraMode.FirstPersonView, CameraController.Instance.GetSkin()};
             var options = new RaiseEventOptions() {
                 Receivers = ReceiverGroup.Others,
             };

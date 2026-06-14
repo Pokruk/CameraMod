@@ -11,6 +11,7 @@ namespace CameraMod.Camera.Networking {
     struct TabletReplication {
         public Transform target;
         public Transform mesh;
+        public Appearance appearance;
     }
     public class ReplicationHandler : IOnEventCallback, IInRoomCallbacks, IConnectionCallbacks {
         private static string hideOtherTabletsPref = "pokruk_hideOtherTablets";
@@ -41,8 +42,8 @@ namespace CameraMod.Camera.Networking {
             PhotonNetwork.AddCallbackTarget(this);
         }
 
-        private static TabletReplication NewTablet(bool isOwner) {
-            var appearance = AppearancesLoader.InstantiateAppearance("Default");
+        private static TabletReplication NewTablet(bool isOwner, string skinName) {
+            var appearance = AppearancesLoader.InstantiateAppearance(skinName);
             appearance.isOwner = isOwner;
             
             var mesh = appearance.go;
@@ -52,7 +53,8 @@ namespace CameraMod.Camera.Networking {
 
             return new TabletReplication() {
                 mesh = mesh.transform,
-                target = target.transform
+                target = target.transform,
+                appearance = appearance
             };
         }
         
@@ -77,6 +79,11 @@ namespace CameraMod.Camera.Networking {
             if (!(content[2] is int)) return;
             if (!(content[3] is bool)) return;
             if (!(content[4] is bool)) return;
+
+            var unvalidatedSkinName = "Default";
+            if (content.Length > 5 && content[5] is string) {
+                unvalidatedSkinName = content[5] as string;
+            }
             
             Vector3 position = (Vector3)content[0];
             Quaternion rotation = (Quaternion)content[1];
@@ -84,7 +91,7 @@ namespace CameraMod.Camera.Networking {
             bool toLerp = (bool)content[3];
             bool isFirstPerson = (bool)content[4];
             
-            OnDataReceived(sender, position, rotation, replicationParent, toLerp, isFirstPerson);
+            OnDataReceived(sender, position, rotation, replicationParent, toLerp, isFirstPerson, unvalidatedSkinName);
         }
         
         private static Dictionary<Player, TabletReplication> Tablets = new Dictionary<Player, TabletReplication>();
@@ -104,7 +111,7 @@ namespace CameraMod.Camera.Networking {
             }
             return null;
         }
-        private void OnDataReceived(Player sender, Vector3 position, Quaternion rotation, ReplicationParent replicationParent, bool toLerp, bool isFirstPerson) {
+        private void OnDataReceived(Player sender, Vector3 position, Quaternion rotation, ReplicationParent replicationParent, bool toLerp, bool isFirstPerson, string unvalidatedSkinName) {
             var rig = GorillaGameManager.instance.FindPlayerVRRig(sender);
             if (rig == null) {
                 Debug.Log("Rig not found");
@@ -113,8 +120,16 @@ namespace CameraMod.Camera.Networking {
 
             var isNewOne = !Tablets.TryGetValue(sender, out TabletReplication tablet);
             if (isNewOne) {
-                tablet = NewTablet(StartPatch.owners.Contains(sender.UserId));
+                var skin = AppearancesLoader.IsValidAppearanceName(unvalidatedSkinName)
+                    ? unvalidatedSkinName
+                    : "Default"; 
+                tablet = NewTablet(StartPatch.owners.Contains(sender.UserId), skin);
                 Tablets[sender] = tablet;
+            } else if (tablet.appearance.name != unvalidatedSkinName && AppearancesLoader.IsValidAppearanceName(unvalidatedSkinName)) {
+                DestroyTablet(sender);
+                Tablets.Remove(sender);
+                
+                tablet = NewTablet(StartPatch.owners.Contains(sender.UserId), unvalidatedSkinName);
             }
 
             if (isFirstPerson) {

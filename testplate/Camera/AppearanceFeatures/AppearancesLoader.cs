@@ -18,6 +18,11 @@ namespace CameraMod.Camera.AppearanceFeatures {
             
             isLoaded = true;
         }
+
+        public static bool IsValidAppearanceName(string name) {
+            return appearancePrefabs.ContainsKey(name);
+        }
+        
         private static GameObject InstantiateAppearanceGO(string name) {
             if (!isLoaded) {
                 Load();
