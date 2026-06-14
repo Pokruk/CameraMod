@@ -14,6 +14,7 @@ namespace CameraMod.Camera.AppearanceFeatures {
             }
 
             LoadPrefab("Default");
+            LoadPrefab("Purple");
             
             isLoaded = true;
         }

@@ -17,7 +17,7 @@ namespace CameraMod.Camera.AppearanceFeatures {
         
         public Appearance(GameObject go) {
             this.go = go;
-            adminLabel = go.transform.Find("IsOwner").gameObject;
+            adminLabel = go.transform.Find("Offset").Find("IsOwner").gameObject;
         }
     }
 }

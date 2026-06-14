@@ -143,7 +143,7 @@ namespace CameraMod.Camera {
             colorScreenGo = LoadBundleAndInstantiate("ColorScreen", ".colorscreen");
             cameraTabletT = LoadBundleAndInstantiate("CameraTablet", ".pokrukcam").transform;
             
-            appearance = AppearancesLoader.InstantiateAppearance("Default");
+            appearance = AppearancesLoader.InstantiateAppearance("Purple");
             appearance.transform.SetParent(cameraTabletT);
             appearance.transform.localScale = Vector3.one;
             appearance.transform.localPosition = Vector3.zero;
